@@ -28,6 +28,12 @@ Due difetti, in particolare, hanno spinto a costruire un'interfaccia diversa:
    "scatti al braccio", "morso alla lingua") e lasciare che sia il **sistema a tradurre**
    verso la categoria clinica per il medico.
 
+> **ILAE 2017** = *International League Against Epilepsy*, edizione 2017: la
+> classificazione ufficiale e più diffusa dei tipi di crisi epilettiche. Organizza ogni
+> crisi per **esordio** (focale / generalizzato / non determinato), **coscienza**
+> (conservata / compromessa) e **componente motoria o meno**. È il "linguaggio" che il
+> neurologo riconosce, ed è la mappa verso cui Aura traduce le descrizioni in parole comuni.
+
 Da qui i **due principi non negoziabili** dell'interfaccia:
 
 > **1. Registrazione post-crisi assistita** — non un modulo, ma un flusso guidato: una

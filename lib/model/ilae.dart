@@ -1,4 +1,6 @@
 /// Classificazione delle crisi secondo ILAE 2017 (versione semplificata).
+/// ILAE = International League Against Epilepsy; l'edizione 2017 è lo standard
+/// dei tipi di crisi (esordio, coscienza, componente motoria).
 ///
 /// NON è una diagnosi: è la categoria clinica *derivata* dalle descrizioni in
 /// linguaggio naturale dell'utente. Va sempre presentata come "proposta, da

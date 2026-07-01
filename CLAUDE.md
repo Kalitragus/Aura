@@ -12,8 +12,10 @@ confusa. Due principi guidano ogni scelta di design (vedi `README.md`):
    "Non ricordo / salta" ovunque, quick-capture in un tap), mai un form da compilare da
    lucidi.
 2. **Tassonomia in linguaggio naturale** — l'utente descrive in parole sue; il sistema
-   *traduce* verso la classificazione clinica **ILAE 2017**. Sempre una *proposta da
-   confermare col medico*, **mai una diagnosi**.
+   *traduce* verso la classificazione clinica **ILAE 2017** (*International League Against
+   Epilepsy*, ed. 2017: lo standard dei tipi di crisi — esordio focale/generalizzato,
+   coscienza conservata/compromessa, componente motoria/non-motoria). Sempre una *proposta
+   da confermare col medico*, **mai una diagnosi**.
 
 ## Comandi
 
