@@ -1,0 +1,47 @@
+name: aura
+description: >-
+  Diario delle crisi epilettiche ottimizzato per la registrazione post-crisi
+  assistita e una tassonomia in linguaggio naturale (traduzione verso ILAE).
+publish_to: none
+version: 0.0.1
+
+environment:
+  sdk: ^3.4.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  pdf: ^3.13.0
+  printing: ^5.15.0
+  shared_preferences: ^2.5.5
+  table_calendar: ^3.2.0
+  intl: ^0.20.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.4
+
+# Il cuore (engine di traduzione, in lib/engine) resta Dart puro: nessuna
+# dipendenza da Flutter, testabile in isolamento. Flutter serve per la UI.
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icon/logo.png
+
+# Icona app (Android) + favicon/icone web generate dal logo.
+# Rigenera con: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: "assets/icon/logo.png"
+  android: true
+  ios: false
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icon/logo.png"
+  web:
+    generate: true
+    image_path: "assets/icon/logo.png"
+    background_color: "#FFFFFF"
+    theme_color: "#6A3EA1"
