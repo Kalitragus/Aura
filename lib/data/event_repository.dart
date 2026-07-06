@@ -1,15 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/seizure_event.dart';
+import '../services/encrypted_event_store.dart';
 
-/// Repository degli eventi crisi con persistenza locale su [SharedPreferences]
-/// (JSON on-device, nessun server). I dati sopravvivono alla chiusura dell'app.
+/// Repository degli eventi con persistenza locale cifrata on-device.
 class EventRepository extends ChangeNotifier {
-  static const _storageKey = 'events_v1';
+  EventRepository({EncryptedEventStore? store})
+      : _store = store ?? EncryptedEventStore();
 
+  final EncryptedEventStore _store;
   final List<SeizureEvent> _events = [];
   bool _loaded = false;
 
@@ -22,29 +23,26 @@ class EventRepository extends ChangeNotifier {
 
   /// Carica gli eventi salvati. Da chiamare una volta all'avvio.
   Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_storageKey);
-    if (raw != null) {
-      try {
+    try {
+      final raw = await _store.read();
+      if (raw != null) {
         final list = jsonDecode(raw) as List;
         _events
           ..clear()
           ..addAll(list.map((e) =>
               SeizureEvent.fromJson((e as Map).cast<String, dynamic>())));
-      } catch (_) {
-        // Dato corrotto: si riparte da vuoto senza crashare.
       }
+    } catch (e) {
+      debugPrint('Aura: storage eventi non leggibile: $e');
+      // Dato corrotto o chiave non disponibile: si riparte da vuoto senza
+      // crashare. Non sovrascriviamo finché l'utente non salva nuovi eventi.
     }
     _loaded = true;
     notifyListeners();
   }
 
   Future<void> _persist() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      _storageKey,
-      jsonEncode(_events.map((e) => e.toJson()).toList()),
-    );
+    await _store.write(jsonEncode(_events.map((e) => e.toJson()).toList()));
   }
 
   /// Quick-capture: crea subito un evento con timestamp. Nient'altro richiesto.

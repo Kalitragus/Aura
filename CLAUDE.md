@@ -76,9 +76,11 @@ Punti chiave da capire prima di modificare:
   testabili in isolamento. Tenerli così — la UI ci sta sopra, non dentro.
 
 - **Persistenza**: `data/event_repository.dart` è un `ChangeNotifier` (istanza globale
-  `eventRepository`) che salva/carica gli eventi come JSON in `shared_preferences`. Viene
-  caricato in `main()` prima di `runApp`. Ogni mutazione chiama `notifyListeners()` +
-  `_persist()`. Le schermate reagiscono via `ListenableBuilder`.
+  `eventRepository`) che salva/carica gli eventi tramite
+  `services/encrypted_event_store.dart`. Il JSON degli eventi viene cifrato con AES-GCM e
+  la chiave resta nel secure storage della piattaforma. Lo store migra automaticamente il
+  vecchio `events_v1` in chiaro verso `events_v2_encrypted`. Viene caricato in `main()`
+  prima di `runApp`. Ogni mutazione chiama `notifyListeners()` + `_persist()`.
 
 - **UI**: `home_screen` (quick-capture + accesso a calendario/report) → `capture_flow_screen`
   (flusso guidato; `startAtReview: true` riapre un evento completato sulla pagina finale)
@@ -89,7 +91,8 @@ Punti chiave da capire prima di modificare:
 ## Convenzioni
 
 - **Privacy**: i dati sono sanitari e restano **on-device**. Non introdurre chiamate di
-  rete o telemetria. La cifratura a riposo è un TODO noto (vedi roadmap nel README).
+  rete o telemetria. La cifratura a riposo è implementata nello store eventi; non
+  reintrodurre storage in chiaro per eventi, note o descrittori clinici.
 - **Disclaimer non violabile**: mai presentare la categoria ILAE come diagnosi; sempre
   "proposta automatica, da confermare col medico".
 - **Identità git anonimizzata**: i commit usano `Kalitragus <Kalitragus@users.noreply.github.com>`

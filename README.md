@@ -72,7 +72,8 @@ Lo stato d'animo (contesto/trigger) non influenza la classificazione clinica.
   destra (stato d'animo, sintomi, categoria proposta).
 - **Export PDF** condivisibile (email, ecc.) con tabella cronologica e disclaimer.
 - **Eliminazione con conferma** (cestino) da elenco, calendario e pagina evento.
-- **Persistenza locale on-device**: gli eventi sopravvivono alla chiusura dell'app.
+- **Persistenza locale cifrata on-device**: gli eventi sopravvivono alla chiusura
+  dell'app e il JSON non resta salvato in chiaro.
 - Palette **viola** — colore della consapevolezza sull'epilessia.
 
 ## Struttura del repository
@@ -86,10 +87,11 @@ lib/
     seizure_event.dart          # evento crisi/aura (+ serializzazione JSON)
   data/
     descriptor_catalog.dart     # tabella statica curata: parole → spinte cliniche
-    event_repository.dart       # store in memoria + persistenza (shared_preferences)
+    event_repository.dart       # store in memoria + persistenza cifrata
   engine/
     seizure_classifier.dart     # media pesata → classe + confidenza + alternative (Dart puro)
   services/
+    encrypted_event_store.dart  # cifratura AES-GCM + migrazione storage v1
     report_pdf.dart             # generazione del PDF per il medico
   ui/
     home_screen.dart            # quick-capture crisi/aura + eventi recenti
@@ -132,10 +134,11 @@ dart run flutter_launcher_icons
 
 ## Privacy
 
-Tutti i dati restano **sul dispositivo** (JSON locale via `shared_preferences`): nessun
-server, nessuna rete, nessun account. Coerentemente con la natura sanitaria dei dati, la
-**cifratura a riposo** è il prossimo passo prima di un uso reale o di un eventuale
-backup/sync (vedi Roadmap).
+Tutti i dati restano **sul dispositivo**: nessun server, nessuna rete, nessun account. Il
+diario viene salvato localmente come payload cifrato con AES-GCM; la chiave è custodita
+nel secure storage della piattaforma (Android Keystore su Android). Se l'app trova dati
+di una versione precedente salvati in chiaro, li migra automaticamente al nuovo formato
+cifrato.
 
 ## Stato e roadmap
 
@@ -148,11 +151,11 @@ Fatto:
 - [x] Export PDF per il medico
 - [x] Eliminazione con conferma
 - [x] Persistenza locale on-device
+- [x] Cifratura a riposo degli eventi salvati
 - [x] Icona app + favicon + palette viola
 
 Prossimi passi:
 
-- [ ] **Cifratura a riposo** dei dati (dato sanitario sensibile)
 - [ ] Input vocale nel flusso guidato ("racconta cosa ricordi")
 - [ ] Diario farmaci + promemoria
 - [ ] Modalità testimone (per chi assiste alla crisi)
