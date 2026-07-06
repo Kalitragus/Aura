@@ -1,5 +1,13 @@
-/// Un evento crisi registrato. In v1 vive solo in memoria (nessuna
-/// persistenza): l'obiettivo qui è il *flusso* di registrazione, non lo storage.
+/// Tipo di evento registrato nel diario.
+enum EventKind {
+  /// Crisi epilettica completa o sospetta.
+  seizure,
+
+  /// Aura/preavviso registrato come evento autonomo.
+  aura,
+}
+
+/// Un evento registrato nel diario, con persistenza locale on-device.
 enum EventStatus {
   /// Catturato al volo (quick-capture) ma non ancora dettagliato.
   draft,
@@ -10,6 +18,9 @@ enum EventStatus {
 
 class SeizureEvent {
   final String id;
+
+  /// Distingue una crisi da un'aura registrata come evento autonomo.
+  final EventKind kind;
 
   /// Timestamp di cattura (auto). È l'unico dato obbligatorio: basta un tap.
   final DateTime startedAt;
@@ -28,6 +39,7 @@ class SeizureEvent {
   SeizureEvent({
     required this.id,
     required this.startedAt,
+    this.kind = EventKind.seizure,
     this.status = EventStatus.draft,
     Set<String>? descriptorKeys,
     this.endedAt,
@@ -40,6 +52,7 @@ class SeizureEvent {
 
   Map<String, dynamic> toJson() => {
         'id': id,
+        'kind': kind.name,
         'startedAt': startedAt.toIso8601String(),
         'endedAt': endedAt?.toIso8601String(),
         'status': status.name,
@@ -50,6 +63,9 @@ class SeizureEvent {
   factory SeizureEvent.fromJson(Map<String, dynamic> j) => SeizureEvent(
         id: j['id'] as String,
         startedAt: DateTime.parse(j['startedAt'] as String),
+        kind: j['kind'] == null
+            ? EventKind.seizure
+            : EventKind.values.byName(j['kind'] as String),
         endedAt: j['endedAt'] == null
             ? null
             : DateTime.parse(j['endedAt'] as String),

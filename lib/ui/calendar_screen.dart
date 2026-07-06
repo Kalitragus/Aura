@@ -21,9 +21,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
 
-  List<SeizureEvent> _eventsForDay(DateTime day) => eventRepository.events
-      .where((e) => isSameDay(e.startedAt, day))
-      .toList();
+  List<SeizureEvent> _eventsForDay(DateTime day) =>
+      eventRepository.events.where((e) => isSameDay(e.startedAt, day)).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +99,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           child: Text('Nessuna crisi in questo giorno.'))
                       : ListView.separated(
                           itemCount: dayEvents.length,
-                          separatorBuilder: (_, __) =>
-                              const Divider(height: 1),
+                          separatorBuilder: (_, __) => const Divider(height: 1),
                           itemBuilder: (context, i) =>
                               _DayEventTile(event: dayEvents[i]),
                         ),
@@ -123,8 +121,14 @@ class _DayEventTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = const SeizureClassifier().classify(event.descriptorKeys);
-    final category = r.confidence > 0 ? r.primary.clinicalLabel : 'Da completare';
+    final category = event.kind == EventKind.aura
+        ? 'Aura${event.isDraft ? ' da completare' : ''}'
+        : (r.confidence > 0 ? r.primary.clinicalLabel : 'Da completare');
     return ListTile(
+      leading: Icon(
+        event.kind == EventKind.aura ? Icons.auto_awesome : Icons.bolt,
+        color: Theme.of(context).colorScheme.primary,
+      ),
       title: Text(_time(event.startedAt)),
       subtitle: Text(category),
       onTap: () => Navigator.of(context).push(

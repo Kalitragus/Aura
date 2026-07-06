@@ -90,6 +90,89 @@ const List<Descriptor> descriptorCatalog = [
     motorHint: MotorClass.nonMotor,
     weight: 0.7,
   ),
+  Descriptor(
+    key: 'visual_aura',
+    labelNatural: 'Luci, macchie o visione alterata',
+    phase: SeizurePhase.aura,
+    family: 'Sensi / preavviso',
+    onsetHint: Onset.focal,
+    motorHint: MotorClass.nonMotor,
+    weight: 0.75,
+  ),
+  Descriptor(
+    key: 'sound_aura',
+    labelNatural: 'Suoni strani o distorti',
+    phase: SeizurePhase.aura,
+    family: 'Sensi / preavviso',
+    onsetHint: Onset.focal,
+    motorHint: MotorClass.nonMotor,
+    weight: 0.7,
+  ),
+  Descriptor(
+    key: 'speech_aura',
+    labelNatural: 'Difficoltà a parlare o trovare le parole',
+    phase: SeizurePhase.aura,
+    family: 'Sensi / preavviso',
+    onsetHint: Onset.focal,
+    motorHint: MotorClass.nonMotor,
+    weight: 0.7,
+  ),
+
+  // --------------------------------------------------------------- CONFUSIONE
+  // Domanda dedicata al flusso aura. Non spinge la classificazione: serve a
+  // capire quanto l'episodio ha alterato presenza/orientamento.
+  Descriptor(
+    key: 'confusion_none',
+    labelNatural: 'No, ero lucido',
+    phase: SeizurePhase.postictal,
+    family: 'Confusione',
+  ),
+  Descriptor(
+    key: 'confusion_mild',
+    labelNatural: 'Un po\' confuso ma orientato',
+    phase: SeizurePhase.postictal,
+    family: 'Confusione',
+  ),
+  Descriptor(
+    key: 'confusion_clear',
+    labelNatural: 'Confuso / faticavo a orientarmi',
+    phase: SeizurePhase.postictal,
+    family: 'Confusione',
+  ),
+  Descriptor(
+    key: 'confusion_memory_gap',
+    labelNatural: 'Ho un vuoto di memoria',
+    phase: SeizurePhase.postictal,
+    family: 'Confusione',
+  ),
+
+  // ------------------------------------------------------------ DURATA AURA
+  // Scaglioni pratici per diario: molte aure sono nell'ordine dei secondi o
+  // sotto i 2 minuti, ma registriamo anche episodi più lunghi senza inferire.
+  Descriptor(
+    key: 'aura_duration_under_10s',
+    labelNatural: 'Meno di 10 secondi',
+    phase: SeizurePhase.aura,
+    family: 'Durata aura',
+  ),
+  Descriptor(
+    key: 'aura_duration_10_30s',
+    labelNatural: '10-30 secondi',
+    phase: SeizurePhase.aura,
+    family: 'Durata aura',
+  ),
+  Descriptor(
+    key: 'aura_duration_30s_2m',
+    labelNatural: '30 secondi - 2 minuti',
+    phase: SeizurePhase.aura,
+    family: 'Durata aura',
+  ),
+  Descriptor(
+    key: 'aura_duration_over_2m_unknown',
+    labelNatural: 'Oltre 2 minuti / non so',
+    phase: SeizurePhase.aura,
+    family: 'Durata aura',
+  ),
 
   // ---------------------------------------------------------------- ICTAL / corpo
   Descriptor(

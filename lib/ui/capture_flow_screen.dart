@@ -9,7 +9,7 @@ import 'dialogs.dart';
 
 /// Ordine delle fasi + domanda in linguaggio quotidiano per ciascuna.
 /// Una fase per schermata: mai un form denso.
-const List<({String family, String title, String question})> _steps = [
+const List<({String family, String title, String question})> _seizureSteps = [
   (
     family: "Stato d'animo",
     title: 'Stato d\'animo',
@@ -37,6 +37,29 @@ const List<({String family, String title, String question})> _steps = [
   ),
 ];
 
+const List<({String family, String title, String question})> _auraSteps = [
+  (
+    family: "Stato d'animo",
+    title: 'Stato d\'animo',
+    question: 'Come ti sentivi prima dell\'aura?',
+  ),
+  (
+    family: 'Sensi / preavviso',
+    title: 'Tipo di aura',
+    question: 'Che tipo di aura hai percepito?',
+  ),
+  (
+    family: 'Durata aura',
+    title: 'Durata',
+    question: 'Quanto è durata circa?',
+  ),
+  (
+    family: 'Confusione',
+    title: 'Confusione',
+    question: 'Ti sentivi confuso o poco presente?',
+  ),
+];
+
 class CaptureFlowScreen extends StatefulWidget {
   const CaptureFlowScreen({
     super.key,
@@ -55,6 +78,9 @@ class CaptureFlowScreen extends StatefulWidget {
 }
 
 class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
+  List<({String family, String title, String question})> get _steps =>
+      widget.event.kind == EventKind.aura ? _auraSteps : _seizureSteps;
+
   late int _step = widget.startAtReview ? _steps.length : 0;
 
   bool get _isReview => _step >= _steps.length;
@@ -94,7 +120,9 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
     final progress = (_step / (_steps.length)).clamp(0.0, 1.0);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isReview ? 'Proposta' : _steps[_step].title),
+        title: Text(_isReview
+            ? (widget.event.kind == EventKind.aura ? 'Riepilogo' : 'Proposta')
+            : _steps[_step].title),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: LinearProgressIndicator(value: _isReview ? 1 : progress),
@@ -109,13 +137,13 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
   Widget _buildStep(BuildContext context) {
     final step = _steps[_step];
     final descriptors = _descriptorsFor(step.family);
+    final singleChoiceFamilies = {'Durata aura', 'Confusione'};
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(step.question,
-              style: Theme.of(context).textTheme.headlineSmall),
+          Text(step.question, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 6),
           Text('Tocca tutto ciò che riconosci. Puoi anche saltare.',
               style: Theme.of(context).textTheme.bodyMedium),
@@ -130,7 +158,13 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
                     _BigChoiceChip(
                       label: d.labelNatural,
                       selected: widget.event.descriptorKeys.contains(d.key),
-                      onTap: () => _toggle(d.key),
+                      onTap: () {
+                        if (singleChoiceFamilies.contains(step.family)) {
+                          _selectOnlyInFamily(d);
+                        } else {
+                          _toggle(d.key);
+                        }
+                      },
                     ),
                 ],
               ),
@@ -171,6 +205,10 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
   }
 
   Widget _buildReview(BuildContext context) {
+    if (widget.event.kind == EventKind.aura) {
+      return _buildAuraReview(context);
+    }
+
     final result =
         const SeizureClassifier().classify(widget.event.descriptorKeys);
     final scheme = Theme.of(context).colorScheme;
@@ -273,6 +311,116 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
       ],
     );
   }
+
+  Widget _buildAuraReview(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final mood = _labelsForFamily("Stato d'animo");
+    final aura = _labelsForFamily('Sensi / preavviso');
+    final duration = _labelsForFamily('Durata aura');
+    final confusion = _labelsForFamily('Confusione');
+
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: scheme.secondaryContainer,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.auto_awesome, color: scheme.onSecondaryContainer),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Aura registrata come episodio autonomo. Portala nel diario se si ripete o cambia.',
+                  style: TextStyle(color: scheme.onSecondaryContainer),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Text('Riepilogo aura',
+            style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(height: 14),
+        _reviewLine(context, 'Umore', mood),
+        _reviewLine(context, 'Tipo di aura', aura),
+        _reviewLine(context, 'Durata', duration),
+        _reviewLine(context, 'Confusione', confusion),
+        if (widget.event.descriptorKeys.isEmpty) ...[
+          const SizedBox(height: 12),
+          const Text(
+            'Non hai selezionato dettagli. Puoi salvarla comunque e completarla più tardi.',
+          ),
+        ],
+        const SizedBox(height: 28),
+        OutlinedButton(
+          onPressed: _back,
+          child: const Text('Torna a modificare'),
+        ),
+        const SizedBox(height: 12),
+        FilledButton(
+          onPressed: _save,
+          child: const Text('Salva aura'),
+        ),
+        const SizedBox(height: 12),
+        TextButton.icon(
+          onPressed: _delete,
+          icon: Icon(Icons.delete_outline,
+              color: Theme.of(context).colorScheme.error),
+          label: Text(
+            'Elimina questa aura',
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _reviewLine(BuildContext context, String label, String value) {
+    if (value == '—') return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: RichText(
+        text: TextSpan(
+          style: Theme.of(context).textTheme.bodyLarge,
+          children: [
+            TextSpan(
+              text: '$label: ',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            TextSpan(text: value),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _labelsForFamily(String family) {
+    final labels = widget.event.descriptorKeys
+        .map((k) => descriptorByKey[k])
+        .where((d) => d != null && d.family == family)
+        .map((d) => d!.labelNatural)
+        .toList();
+    return labels.isEmpty ? '—' : labels.join('; ');
+  }
+
+  void _selectOnlyInFamily(Descriptor descriptor) {
+    final keysInFamily = descriptorCatalog
+        .where((d) => d.family == descriptor.family)
+        .map((d) => d.key)
+        .toSet();
+    setState(() {
+      if (widget.event.descriptorKeys.contains(descriptor.key)) {
+        widget.event.descriptorKeys.remove(descriptor.key);
+      } else {
+        widget.event.descriptorKeys.removeAll(keysInFamily);
+        widget.event.descriptorKeys.add(descriptor.key);
+      }
+    });
+  }
 }
 
 /// Chip grande, ad alto contatto, adatto a dita imprecise.
@@ -291,7 +439,8 @@ class _BigChoiceChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Material(
-      color: selected ? scheme.primaryContainer : scheme.surfaceContainerHighest,
+      color:
+          selected ? scheme.primaryContainer : scheme.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
@@ -315,9 +464,8 @@ class _BigChoiceChip extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                    color: selected
-                        ? scheme.onPrimaryContainer
-                        : scheme.onSurface,
+                    color:
+                        selected ? scheme.onPrimaryContainer : scheme.onSurface,
                   ),
                 ),
               ),

@@ -11,11 +11,14 @@ import 'report_screen.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  Future<void> _quickCapture(BuildContext context) async {
+  Future<void> _quickCapture(
+    BuildContext context, {
+    EventKind kind = EventKind.seizure,
+  }) async {
     // Un tap → l'evento esiste già (timestamp catturato). Tutto il resto è
     // rimandabile: apriamo il flusso guidato, ma l'utente può uscirne quando
     // vuole e l'evento resta come bozza da completare.
-    final event = eventRepository.quickCapture();
+    final event = eventRepository.quickCapture(kind: kind);
     await Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => CaptureFlowScreen(event: event)),
     );
@@ -61,9 +64,22 @@ class HomeScreen extends StatelessWidget {
                 icon: const Icon(Icons.bolt, size: 28),
                 label: const Text('Ho avuto una crisi'),
               ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => _quickCapture(context, kind: EventKind.aura),
+                icon: const Icon(Icons.auto_awesome, size: 26),
+                label: const Text('Ho avuto un\'aura'),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(60),
+                  textStyle: const TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
               const SizedBox(height: 8),
               Text(
-                'Un tocco registra ora e luogo. I dettagli puoi aggiungerli dopo.',
+                'Un tocco registra l\'orario. I dettagli puoi aggiungerli dopo.',
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -153,8 +169,8 @@ class _EventTile extends StatelessWidget {
       title: Text(_formatDateTime(event.startedAt)),
       subtitle: Text(
         event.isDraft
-            ? 'Bozza — tocca per completare'
-            : '${event.descriptorKeys.length} dettagli registrati',
+            ? '${_kindLabel(event)} in bozza — tocca per completare'
+            : '${_kindLabel(event)}: ${event.descriptorKeys.length} dettagli registrati',
       ),
       trailing: const Icon(Icons.chevron_right),
       onTap: () => Navigator.of(context).push(
@@ -170,6 +186,9 @@ class _EventTile extends StatelessWidget {
     );
   }
 }
+
+String _kindLabel(SeizureEvent event) =>
+    event.kind == EventKind.aura ? 'Aura' : 'Crisi';
 
 String _formatDateTime(DateTime dt) {
   String two(int n) => n.toString().padLeft(2, '0');

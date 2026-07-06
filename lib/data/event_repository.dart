@@ -48,10 +48,12 @@ class EventRepository extends ChangeNotifier {
   }
 
   /// Quick-capture: crea subito un evento con timestamp. Nient'altro richiesto.
-  SeizureEvent quickCapture() {
+  SeizureEvent quickCapture({EventKind kind = EventKind.seizure}) {
+    final now = DateTime.now();
     final e = SeizureEvent(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      startedAt: DateTime.now(),
+      id: now.microsecondsSinceEpoch.toString(),
+      kind: kind,
+      startedAt: now,
     );
     _events.add(e);
     notifyListeners();

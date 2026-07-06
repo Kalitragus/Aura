@@ -4,13 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Cos'è
 
-Aura è un **diario delle crisi epilettiche** in Flutter. Il suo scopo non è archiviare
-dati, ma ottimizzare **la registrazione subito dopo la crisi**, quando la persona è
-confusa. Due principi guidano ogni scelta di design (vedi `README.md`):
+Aura è un **diario delle crisi epilettiche e delle aure** in Flutter. Il suo scopo non è
+archiviare dati, ma ottimizzare **la registrazione subito dopo l'evento**, quando la
+persona è confusa o ricorda solo frammenti. Due principi guidano ogni scelta di design
+(vedi `README.md`):
 
-1. **Registrazione post-crisi assistita** — flusso guidato (una domanda per schermata,
+1. **Registrazione post-evento assistita** — flusso guidato (una domanda per schermata,
    "Non ricordo / salta" ovunque, quick-capture in un tap), mai un form da compilare da
-   lucidi.
+   lucidi. La home distingue crisi e aura: l'aura ha un riepilogo autonomo con umore,
+   tipo, durata e confusione.
 2. **Tassonomia in linguaggio naturale** — l'utente descrive in parole sue; il sistema
    *traduce* verso la classificazione clinica **ILAE 2017** (*International League Against
    Epilepsy*, ed. 2017: lo standard dei tipi di crisi — esordio focale/generalizzato,
@@ -64,9 +66,11 @@ Punti chiave da capire prima di modificare:
   (degradazione pulita). I test in `test/seizure_classifier_test.dart` codificano queste
   regole: se le cambi, aggiorna i test di conseguenza.
 
-- **Lo stato d'animo NON è clinico.** I descrittori con `family: "Stato d'animo"` non hanno
-  hint ILAE: sono contesto/trigger. Il motore li esclude dal calcolo della confidenza
-  (`signalCount` in `seizure_classifier.dart`) e il report li mostra in una colonna a parte.
+- **Lo stato d'animo, la durata aura e la confusione NON sono classificatori ILAE.** I
+  descrittori con `family: "Stato d'animo"`, `family: "Durata aura"` e
+  `family: "Confusione"` servono al diario/report, non devono forzare diagnosi. Il motore
+  calcola la confidenza solo dai descrittori con hint clinici (`signalCount` in
+  `seizure_classifier.dart`).
 
 - **`engine/` e `model/ilae.dart` sono Dart puro**: nessuna dipendenza da Flutter,
   testabili in isolamento. Tenerli così — la UI ci sta sopra, non dentro.

@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/icon/logo.png" width="120" alt="Aura logo" />
   <h1>Aura</h1>
-  <p><em>Diario delle crisi epilettiche pensato per il momento in cui serve davvero: subito dopo la crisi.</em></p>
+  <p><em>Diario locale per crisi epilettiche e aure, pensato per registrare subito ciò che si ricorda e trasformarlo in un report utile al medico.</em></p>
 </div>
 
 ---
@@ -61,6 +61,8 @@ Lo stato d'animo (contesto/trigger) non influenza la classificazione clinica.
 ## Funzionalità
 
 - **Quick-capture** in un tap dalla home (data/ora automatiche, dettagli rimandabili).
+- **Registrazione aura separata** dalla crisi: umore, tipo di aura, durata a scaglioni
+  e confusione/presenza, senza forzare una diagnosi.
 - **Flusso guidato** in linguaggio quotidiano: stato d'animo → preavviso/aura → corpo →
   coscienza → dopo. Chip grandi, "Non ricordo / salta" su ogni schermata.
 - **Proposta clinica** con % di confidenza, alternative e avviso "non è una diagnosi".
@@ -81,7 +83,7 @@ lib/
   model/
     ilae.dart                   # enum/classi ILAE 2017 (semplificato) + etichette cliniche
     descriptor.dart             # descrittore in linguaggio naturale + hint pesati
-    seizure_event.dart          # evento crisi (+ serializzazione JSON)
+    seizure_event.dart          # evento crisi/aura (+ serializzazione JSON)
   data/
     descriptor_catalog.dart     # tabella statica curata: parole → spinte cliniche
     event_repository.dart       # store in memoria + persistenza (shared_preferences)
@@ -90,8 +92,8 @@ lib/
   services/
     report_pdf.dart             # generazione del PDF per il medico
   ui/
-    home_screen.dart            # quick-capture + eventi recenti + accesso calendario/report
-    capture_flow_screen.dart    # flusso guidato assistito + pagina proposta
+    home_screen.dart            # quick-capture crisi/aura + eventi recenti
+    capture_flow_screen.dart    # flussi guidati + proposta/riepilogo
     calendar_screen.dart        # calendario mensile + episodi del giorno
     report_screen.dart          # elenco leggibile + export PDF
     dialogs.dart                # conferma eliminazione
@@ -141,6 +143,7 @@ Fatto:
 
 - [x] Motore di traduzione linguaggio → ILAE (Dart puro, testato)
 - [x] Flusso di registrazione guidato assistito + stato d'animo
+- [x] Registrazione aura autonoma con tipo, durata e confusione
 - [x] Calendario mensile + elenco/report leggibile
 - [x] Export PDF per il medico
 - [x] Eliminazione con conferma

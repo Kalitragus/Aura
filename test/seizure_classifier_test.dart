@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:aura/engine/seizure_classifier.dart';
 import 'package:aura/model/ilae.dart';
+import 'package:aura/model/seizure_event.dart';
 
 void main() {
   const classifier = SeizureClassifier();
@@ -108,6 +109,40 @@ void main() {
       );
       expect(c.clinicalLabel, contains('focale'));
       expect(c.clinicalLabel, contains('coscienza conservata'));
+    });
+  });
+
+  group('serializzazione eventi', () {
+    test('gli eventi vecchi senza kind restano crisi', () {
+      final event = SeizureEvent.fromJson({
+        'id': 'old',
+        'startedAt': '2026-07-06T10:00:00.000',
+        'endedAt': null,
+        'status': 'draft',
+        'descriptorKeys': <String>[],
+        'note': null,
+      });
+
+      expect(event.kind, EventKind.seizure);
+    });
+
+    test('salva e rilegge un evento aura', () {
+      final event = SeizureEvent(
+        id: 'aura',
+        kind: EventKind.aura,
+        startedAt: DateTime(2026, 7, 6, 10),
+        descriptorKeys: {
+          'mood_anxious',
+          'visual_aura',
+          'aura_duration_10_30s',
+          'confusion_mild',
+        },
+      );
+
+      final restored = SeizureEvent.fromJson(event.toJson());
+      expect(restored.kind, EventKind.aura);
+      expect(restored.descriptorKeys, contains('visual_aura'));
+      expect(restored.descriptorKeys, contains('aura_duration_10_30s'));
     });
   });
 }

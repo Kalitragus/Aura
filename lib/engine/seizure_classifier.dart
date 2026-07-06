@@ -68,7 +68,8 @@ class SeizureClassifier {
     // Il sottotipo si applica solo se ha un vincitore netto (stacco ≥ 0.55 della
     // quota) e coerenza minima. Altrimenti la proposta resta dimensionale.
     IlaeClass withSubtype = primary;
-    final subtypeStrong = subtypeVotes.top != null && subtypeVotes.share >= 0.55;
+    final subtypeStrong =
+        subtypeVotes.top != null && subtypeVotes.share >= 0.55;
     if (subtypeStrong) {
       withSubtype = _applySubtype(primary, subtypeVotes.top!);
     }
@@ -90,7 +91,8 @@ class SeizureClassifier {
             d.motorHint != null ||
             d.subtypeHint != null)
         .length;
-    final coverage = (signalCount / 4).clamp(0.0, 1.0); // ~4 descrittori = ricco
+    final coverage =
+        (signalCount / 4).clamp(0.0, 1.0); // ~4 descrittori = ricco
     final confidence = (sharpness * 0.7 + coverage * 0.3).clamp(0.0, 1.0);
 
     // Alternative: le classi dei sottotipi in seconda/terza posizione.
@@ -124,7 +126,10 @@ class SeizureClassifier {
           motor: MotorClass.nonMotor,
           subtype: subtype,
         ),
-      'myoclonic' || 'atonic' || 'tonic' || 'clonic' =>
+      'myoclonic' ||
+      'atonic' ||
+      'tonic' ||
+      'clonic' =>
         base.copyWith(motor: MotorClass.motor, subtype: subtype),
       'focal_impaired_awareness' => base.copyWith(
           onset: Onset.focal,

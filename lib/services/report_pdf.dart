@@ -17,18 +17,24 @@ Future<Uint8List> buildReportPdf(List<SeizureEvent> events) async {
   final doc = pw.Document();
 
   // Ordine cronologico crescente per la lettura del medico.
-  final sorted = [...events]..sort((a, b) => a.startedAt.compareTo(b.startedAt));
+  final sorted = [...events]
+    ..sort((a, b) => a.startedAt.compareTo(b.startedAt));
 
   final rows = <List<String>>[];
   for (final e in sorted) {
     final r = classifier.classify(e.descriptorKeys);
-    final category = r.confidence > 0
-        ? '${r.primary.clinicalLabel} (${(r.confidence * 100).round()}%)'
-        : '—';
+    final category = e.kind == EventKind.aura
+        ? (e.isDraft ? 'Aura da completare' : 'Aura registrata')
+        : (r.confidence > 0
+            ? '${r.primary.clinicalLabel} (${(r.confidence * 100).round()}%)'
+            : '—');
     rows.add([
       _formatDateTime(e.startedAt),
+      e.kind == EventKind.aura ? 'Aura' : 'Crisi',
       category,
       _labelsForFamily(e, "Stato d'animo"),
+      _labelsForFamily(e, 'Durata aura'),
+      _labelsForFamily(e, 'Confusione'),
       _clinicalLabels(e),
       e.isDraft ? 'Bozza' : 'Completo',
     ]);
@@ -36,7 +42,8 @@ Future<Uint8List> buildReportPdf(List<SeizureEvent> events) async {
 
   final now = DateTime.now();
   final thisMonth = events
-      .where((e) => e.startedAt.year == now.year && e.startedAt.month == now.month)
+      .where(
+          (e) => e.startedAt.year == now.year && e.startedAt.month == now.month)
       .length;
 
   doc.addPage(
@@ -46,7 +53,7 @@ Future<Uint8List> buildReportPdf(List<SeizureEvent> events) async {
       build: (context) => [
         pw.Header(
           level: 0,
-          child: pw.Text('Diario crisi epilettiche — Report',
+          child: pw.Text('Diario eventi epilettici — Report',
               style: const pw.TextStyle(
                   fontSize: 20, fontWeight: pw.FontWeight.bold)),
         ),
@@ -55,7 +62,7 @@ Future<Uint8List> buildReportPdf(List<SeizureEvent> events) async {
         pw.SizedBox(height: 12),
         pw.Row(
           children: [
-            _stat('Crisi totali', '${events.length}'),
+            _stat('Eventi totali', '${events.length}'),
             _stat('Questo mese', '$thisMonth'),
             _stat('Da completare', '${events.where((e) => e.isDraft).length}'),
           ],
@@ -64,8 +71,11 @@ Future<Uint8List> buildReportPdf(List<SeizureEvent> events) async {
         pw.TableHelper.fromTextArray(
           headers: const [
             'Data / ora',
+            'Tipo',
             'Categoria proposta',
             'Stato d\'animo',
+            'Durata',
+            'Confusione',
             'Sintomi descritti',
             'Stato',
           ],
@@ -77,10 +87,13 @@ Future<Uint8List> buildReportPdf(List<SeizureEvent> events) async {
           cellAlignment: pw.Alignment.topLeft,
           columnWidths: {
             0: const pw.FlexColumnWidth(1.6),
-            1: const pw.FlexColumnWidth(2.2),
+            1: const pw.FlexColumnWidth(0.9),
             2: const pw.FlexColumnWidth(1.8),
-            3: const pw.FlexColumnWidth(3.0),
-            4: const pw.FlexColumnWidth(1.0),
+            3: const pw.FlexColumnWidth(1.3),
+            4: const pw.FlexColumnWidth(1.3),
+            5: const pw.FlexColumnWidth(1.3),
+            6: const pw.FlexColumnWidth(2.2),
+            7: const pw.FlexColumnWidth(1.0),
           },
         ),
         pw.SizedBox(height: 18),
@@ -138,7 +151,11 @@ String _labelsForFamily(SeizureEvent e, String family) {
 String _clinicalLabels(SeizureEvent e) {
   final labels = e.descriptorKeys
       .map((k) => descriptorByKey[k])
-      .where((d) => d != null && d.family != "Stato d'animo")
+      .where((d) =>
+          d != null &&
+          d.family != "Stato d'animo" &&
+          d.family != 'Durata aura' &&
+          d.family != 'Confusione')
       .map((d) => d!.labelNatural)
       .toList();
   return labels.isEmpty ? '—' : labels.join('; ');

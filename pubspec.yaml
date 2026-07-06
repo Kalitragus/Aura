@@ -1,7 +1,7 @@
 name: aura
 description: >-
-  Diario delle crisi epilettiche ottimizzato per la registrazione post-crisi
-  assistita e una tassonomia in linguaggio naturale (traduzione verso ILAE).
+  Diario locale per crisi epilettiche e aure, ottimizzato per registrazione
+  assistita post-evento e tassonomia in linguaggio naturale verso ILAE.
 publish_to: none
 version: 0.0.1
 

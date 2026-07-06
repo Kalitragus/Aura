@@ -36,7 +36,7 @@ class ReportScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Elenco crisi'),
+        title: const Text('Diario eventi'),
         actions: [
           IconButton(
             tooltip: 'Esporta PDF per il medico',
@@ -63,8 +63,7 @@ class ReportScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     itemCount: events.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 4),
-                    itemBuilder: (context, i) =>
-                        _ReportItem(event: events[i]),
+                    itemBuilder: (context, i) => _ReportItem(event: events[i]),
                   ),
                 ),
               ],
@@ -86,10 +85,16 @@ class _ReportItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final r = const SeizureClassifier().classify(event.descriptorKeys);
-    final category = r.confidence > 0
-        ? '${r.primary.clinicalLabel} (${(r.confidence * 100).round()}%)'
-        : (event.isDraft ? 'Bozza da completare' : 'Dettagli insufficienti');
+    final category = event.kind == EventKind.aura
+        ? (event.isDraft ? 'Aura da completare' : 'Aura registrata')
+        : (r.confidence > 0
+            ? '${r.primary.clinicalLabel} (${(r.confidence * 100).round()}%)'
+            : (event.isDraft
+                ? 'Bozza da completare'
+                : 'Dettagli insufficienti'));
     final mood = _labelsForFamily(event, "Stato d'animo");
+    final duration = _labelsForFamily(event, 'Durata aura');
+    final confusion = _labelsForFamily(event, 'Confusione');
     final symptoms = _clinicalLabels(event);
 
     return Card(
@@ -147,6 +152,8 @@ class _ReportItem extends StatelessWidget {
                             ?.copyWith(color: scheme.primary)),
                     const SizedBox(height: 4),
                     _line(context, 'Stato d\'animo', mood),
+                    _line(context, 'Durata', duration),
+                    _line(context, 'Confusione', confusion),
                     _line(context, 'Sintomi', symptoms),
                   ],
                 ),
@@ -204,7 +211,7 @@ class _Summary extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          _StatCard(label: 'Totali', value: '${events.length}'),
+          _StatCard(label: 'Eventi', value: '${events.length}'),
           const SizedBox(width: 12),
           _StatCard(label: 'Questo mese', value: '$thisMonth'),
           const SizedBox(width: 12),
@@ -261,15 +268,29 @@ String _labelsForFamily(SeizureEvent e, String family) {
 String _clinicalLabels(SeizureEvent e) {
   final labels = e.descriptorKeys
       .map((k) => descriptorByKey[k])
-      .where((d) => d != null && d.family != "Stato d'animo")
+      .where((d) =>
+          d != null &&
+          d.family != "Stato d'animo" &&
+          d.family != 'Durata aura' &&
+          d.family != 'Confusione')
       .map((d) => d!.labelNatural)
       .toList();
   return labels.isEmpty ? '—' : labels.join('; ');
 }
 
 const _months = [
-  'gen', 'feb', 'mar', 'apr', 'mag', 'giu',
-  'lug', 'ago', 'set', 'ott', 'nov', 'dic',
+  'gen',
+  'feb',
+  'mar',
+  'apr',
+  'mag',
+  'giu',
+  'lug',
+  'ago',
+  'set',
+  'ott',
+  'nov',
+  'dic',
 ];
 
 String _monthYear(DateTime dt) => '${_months[dt.month - 1]} ${dt.year}';
