@@ -33,6 +33,8 @@ Future<Uint8List> buildReportPdf(List<SeizureEvent> events) async {
       e.kind == EventKind.aura ? 'Aura' : 'Crisi',
       category,
       _labelsForFamily(e, "Stato d'animo"),
+      _labelsForFamily(e, 'Farmaci'),
+      _labelsForFamily(e, 'Dosi saltate'),
       _labelsForFamily(e, 'Durata aura'),
       _labelsForFamily(e, 'Confusione'),
       _clinicalLabels(e),
@@ -74,6 +76,8 @@ Future<Uint8List> buildReportPdf(List<SeizureEvent> events) async {
             'Tipo',
             'Categoria proposta',
             'Stato d\'animo',
+            'Farmaci',
+            'Dosi saltate',
             'Durata',
             'Confusione',
             'Sintomi descritti',
@@ -89,11 +93,13 @@ Future<Uint8List> buildReportPdf(List<SeizureEvent> events) async {
             0: const pw.FlexColumnWidth(1.6),
             1: const pw.FlexColumnWidth(0.9),
             2: const pw.FlexColumnWidth(1.8),
-            3: const pw.FlexColumnWidth(1.3),
+            3: const pw.FlexColumnWidth(1.2),
             4: const pw.FlexColumnWidth(1.3),
-            5: const pw.FlexColumnWidth(1.3),
-            6: const pw.FlexColumnWidth(2.2),
+            5: const pw.FlexColumnWidth(1.0),
+            6: const pw.FlexColumnWidth(1.0),
             7: const pw.FlexColumnWidth(1.0),
+            8: const pw.FlexColumnWidth(2.0),
+            9: const pw.FlexColumnWidth(0.9),
           },
         ),
         pw.SizedBox(height: 18),
@@ -154,6 +160,8 @@ String _clinicalLabels(SeizureEvent e) {
       .where((d) =>
           d != null &&
           d.family != "Stato d'animo" &&
+          d.family != 'Farmaci' &&
+          d.family != 'Dosi saltate' &&
           d.family != 'Durata aura' &&
           d.family != 'Confusione')
       .map((d) => d!.labelNatural)

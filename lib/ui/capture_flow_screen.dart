@@ -16,6 +16,12 @@ const List<({String family, String title, String question})> _seizureSteps = [
     question: 'Come ti sentivi prima della crisi?',
   ),
   (
+    family: 'Farmaci',
+    title: 'Farmaci',
+    question:
+        'Hai saltato o ritardato farmaci antiepilettici negli ultimi giorni?',
+  ),
+  (
     family: 'Sensi / preavviso',
     title: 'Prima',
     question: 'Hai sentito qualcosa poco prima?',
@@ -44,6 +50,12 @@ const List<({String family, String title, String question})> _auraSteps = [
     question: 'Come ti sentivi prima dell\'aura?',
   ),
   (
+    family: 'Farmaci',
+    title: 'Farmaci',
+    question:
+        'Hai saltato o ritardato farmaci antiepilettici negli ultimi giorni?',
+  ),
+  (
     family: 'Sensi / preavviso',
     title: 'Tipo di aura',
     question: 'Che tipo di aura hai percepito?',
@@ -59,6 +71,12 @@ const List<({String family, String title, String question})> _auraSteps = [
     question: 'Ti sentivi confuso o poco presente?',
   ),
 ];
+
+const ({String family, String title, String question}) _missedDoseStep = (
+  family: 'Dosi saltate',
+  title: 'Dosi saltate',
+  question: 'Quante dosi pensi di aver saltato o ritardato?',
+);
 
 class CaptureFlowScreen extends StatefulWidget {
   const CaptureFlowScreen({
@@ -78,12 +96,25 @@ class CaptureFlowScreen extends StatefulWidget {
 }
 
 class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
-  List<({String family, String title, String question})> get _steps =>
-      widget.event.kind == EventKind.aura ? _auraSteps : _seizureSteps;
+  List<({String family, String title, String question})> get _steps {
+    final base =
+        widget.event.kind == EventKind.aura ? _auraSteps : _seizureSteps;
+    final steps = <({String family, String title, String question})>[];
+    for (final step in base) {
+      steps.add(step);
+      if (step.family == 'Farmaci' && _hasMissedMedication) {
+        steps.add(_missedDoseStep);
+      }
+    }
+    return steps;
+  }
 
   late int _step = widget.startAtReview ? _steps.length : 0;
 
   bool get _isReview => _step >= _steps.length;
+
+  bool get _hasMissedMedication =>
+      widget.event.descriptorKeys.any(_isMissedMedicationKey);
 
   List<Descriptor> _descriptorsFor(String family) =>
       descriptorCatalog.where((d) => d.family == family).toList();
@@ -137,7 +168,12 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
   Widget _buildStep(BuildContext context) {
     final step = _steps[_step];
     final descriptors = _descriptorsFor(step.family);
-    final singleChoiceFamilies = {'Durata aura', 'Confusione'};
+    final singleChoiceFamilies = {
+      'Farmaci',
+      'Dosi saltate',
+      'Durata aura',
+      'Confusione',
+    };
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -145,7 +181,7 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
         children: [
           Text(step.question, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 6),
-          Text('Tocca tutto ciò che riconosci. Puoi anche saltare.',
+          Text(_helperTextFor(step.family),
               style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: 20),
           Expanded(
@@ -346,6 +382,8 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
             style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 14),
         _reviewLine(context, 'Umore', mood),
+        _reviewLine(context, 'Farmaci', _labelsForFamily('Farmaci')),
+        _reviewLine(context, 'Dosi saltate', _labelsForFamily('Dosi saltate')),
         _reviewLine(context, 'Tipo di aura', aura),
         _reviewLine(context, 'Durata', duration),
         _reviewLine(context, 'Confusione', confusion),
@@ -412,6 +450,10 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
         .where((d) => d.family == descriptor.family)
         .map((d) => d.key)
         .toSet();
+    final missedDoseKeys = descriptorCatalog
+        .where((d) => d.family == 'Dosi saltate')
+        .map((d) => d.key)
+        .toSet();
     setState(() {
       if (widget.event.descriptorKeys.contains(descriptor.key)) {
         widget.event.descriptorKeys.remove(descriptor.key);
@@ -419,8 +461,31 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
         widget.event.descriptorKeys.removeAll(keysInFamily);
         widget.event.descriptorKeys.add(descriptor.key);
       }
+      if (descriptor.family == 'Farmaci' &&
+          !_isMissedMedicationKey(descriptor.key)) {
+        widget.event.descriptorKeys.removeAll(missedDoseKeys);
+      }
+      if (_step > _steps.length) {
+        _step = _steps.length;
+      }
     });
   }
+}
+
+bool _isMissedMedicationKey(String key) =>
+    key == 'meds_missed_today' ||
+    key == 'meds_missed_yesterday' ||
+    key == 'meds_missed_2_3_days' ||
+    key == 'meds_missed_multiple_days';
+
+String _helperTextFor(String family) {
+  if (family == 'Farmaci') {
+    return 'Serve come contesto per il medico, non come prova della causa.';
+  }
+  if (family == 'Dosi saltate') {
+    return 'Non recuperare dosi senza indicazione del medico o farmacista.';
+  }
+  return 'Tocca tutto ciò che riconosci. Puoi anche saltare.';
 }
 
 /// Chip grande, ad alto contatto, adatto a dita imprecise.

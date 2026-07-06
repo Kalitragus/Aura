@@ -19,6 +19,34 @@ void main() {
       expect(r.confidence, 0.0);
       expect(r.primary.subtype, isNull);
     });
+
+    test('solo contesto farmaci non produce categoria clinica', () {
+      final r = classifier.classify([
+        'meds_missed_yesterday',
+        'missed_doses_one',
+        'mood_tired',
+      ]);
+      expect(r.confidence, 0.0);
+      expect(r.primary.onset, Onset.unknown);
+      expect(r.primary.subtype, isNull);
+    });
+
+    test('solo aura non forza una crisi focale completa', () {
+      final r = classifier.classify(['visual_aura', 'aura_duration_10_30s']);
+      expect(r.confidence, 0.0);
+      expect(r.primary.onset, Onset.unknown);
+      expect(r.primary.subtype, isNull);
+    });
+
+    test('solo segni post-evento non forza tonico-clonica', () {
+      final r = classifier.classify([
+        'tongue_bite',
+        'incontinence',
+        'deep_sleep',
+      ]);
+      expect(r.confidence, 0.0);
+      expect(r.primary.subtype, isNull);
+    });
   });
 
   group('tonico-clonica', () {
@@ -133,6 +161,8 @@ void main() {
         startedAt: DateTime(2026, 7, 6, 10),
         descriptorKeys: {
           'mood_anxious',
+          'meds_missed_yesterday',
+          'missed_doses_one',
           'visual_aura',
           'aura_duration_10_30s',
           'confusion_mild',
@@ -142,6 +172,7 @@ void main() {
       final restored = SeizureEvent.fromJson(event.toJson());
       expect(restored.kind, EventKind.aura);
       expect(restored.descriptorKeys, contains('visual_aura'));
+      expect(restored.descriptorKeys, contains('meds_missed_yesterday'));
       expect(restored.descriptorKeys, contains('aura_duration_10_30s'));
     });
   });

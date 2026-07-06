@@ -56,13 +56,17 @@ un sottotipo; il motore le aggrega e propone una categoria con una **confidenza*
 La filosofia è ereditata dal progetto gemello **Wordsound**: **probabilistico, non
 dogmatico**. Il sistema *propone*, non impone; quando il dato è povero degrada in modo
 pulito (confidenza bassa, nessun sottotipo forzato); le alternative sono sempre esposte.
-Lo stato d'animo (contesto/trigger) non influenza la classificazione clinica.
+Lo stato d'animo resta un dato importante di contesto/trigger e viene riportato
+nel diario per il medico; non viene però usato da solo per decidere il tipo ILAE
+della crisi.
 
 ## Funzionalità
 
 - **Quick-capture** in un tap dalla home (data/ora automatiche, dettagli rimandabili).
 - **Registrazione aura separata** dalla crisi: umore, tipo di aura, durata a scaglioni
   e confusione/presenza, senza forzare una diagnosi.
+- **Contesto farmaci** opzionale e non colpevolizzante: se l'utente ricorda una dose
+  saltata o ritardata, può indicare quando e quante dosi.
 - **Flusso guidato** in linguaggio quotidiano: stato d'animo → preavviso/aura → corpo →
   coscienza → dopo. Chip grandi, "Non ricordo / salta" su ogni schermata.
 - **Proposta clinica** con % di confidenza, alternative e avviso "non è una diagnosi".
@@ -147,6 +151,7 @@ Fatto:
 - [x] Motore di traduzione linguaggio → ILAE (Dart puro, testato)
 - [x] Flusso di registrazione guidato assistito + stato d'animo
 - [x] Registrazione aura autonoma con tipo, durata e confusione
+- [x] Contesto farmaci saltati/ritardati nel flusso guidato
 - [x] Calendario mensile + elenco/report leggibile
 - [x] Export PDF per il medico
 - [x] Eliminazione con conferma

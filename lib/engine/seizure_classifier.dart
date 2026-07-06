@@ -54,6 +54,17 @@ class SeizureClassifier {
       );
     }
 
+    final hasIctalCoreSignal =
+        selected.any((d) => d.family == 'Corpo' || d.family == 'Coscienza');
+    if (!hasIctalCoreSignal) {
+      return ClassificationResult(
+        primary: const IlaeClass(),
+        confidence: 0.0,
+        rationale: selected.map((d) => d.key).toList(),
+        alternatives: const [],
+      );
+    }
+
     final onset = _voteEnum<Onset>(selected, (d) => d.onsetHint);
     final awareness = _voteEnum<Awareness>(selected, (d) => d.awarenessHint);
     final motor = _voteEnum<MotorClass>(selected, (d) => d.motorHint);
@@ -82,8 +93,9 @@ class SeizureClassifier {
         .toList();
     final sharpness =
         dims.isEmpty ? 0.0 : dims.reduce((a, b) => a + b) / dims.length;
-    // Solo i descrittori con almeno una spinta clinica contano come "segnale":
-    // lo stato d'animo è contesto/trigger, non descrive la crisi.
+    // Solo i descrittori con almeno una spinta ILAE contano come "segnale"
+    // classificatorio. Umore, farmaci e contesto restano importanti nel report,
+    // ma non devono decidere da soli il tipo clinico della crisi.
     final signalCount = selected
         .where((d) =>
             d.onsetHint != null ||

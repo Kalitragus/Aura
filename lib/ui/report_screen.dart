@@ -93,6 +93,8 @@ class _ReportItem extends StatelessWidget {
                 ? 'Bozza da completare'
                 : 'Dettagli insufficienti'));
     final mood = _labelsForFamily(event, "Stato d'animo");
+    final medication = _labelsForFamily(event, 'Farmaci');
+    final missedDoses = _labelsForFamily(event, 'Dosi saltate');
     final duration = _labelsForFamily(event, 'Durata aura');
     final confusion = _labelsForFamily(event, 'Confusione');
     final symptoms = _clinicalLabels(event);
@@ -152,6 +154,8 @@ class _ReportItem extends StatelessWidget {
                             ?.copyWith(color: scheme.primary)),
                     const SizedBox(height: 4),
                     _line(context, 'Stato d\'animo', mood),
+                    _line(context, 'Farmaci', medication),
+                    _line(context, 'Dosi saltate', missedDoses),
                     _line(context, 'Durata', duration),
                     _line(context, 'Confusione', confusion),
                     _line(context, 'Sintomi', symptoms),
@@ -271,6 +275,8 @@ String _clinicalLabels(SeizureEvent e) {
       .where((d) =>
           d != null &&
           d.family != "Stato d'animo" &&
+          d.family != 'Farmaci' &&
+          d.family != 'Dosi saltate' &&
           d.family != 'Durata aura' &&
           d.family != 'Confusione')
       .map((d) => d!.labelNatural)

@@ -66,11 +66,14 @@ Punti chiave da capire prima di modificare:
   (degradazione pulita). I test in `test/seizure_classifier_test.dart` codificano queste
   regole: se le cambi, aggiorna i test di conseguenza.
 
-- **Lo stato d'animo, la durata aura e la confusione NON sono classificatori ILAE.** I
-  descrittori con `family: "Stato d'animo"`, `family: "Durata aura"` e
-  `family: "Confusione"` servono al diario/report, non devono forzare diagnosi. Il motore
+- **Stato d'animo, durata aura, confusione e farmaci sono dati clinicamente utili,
+  ma non classificatori ILAE.** I descrittori con `family: "Stato d'animo"`,
+  `family: "Durata aura"`, `family: "Confusione"`, `family: "Farmaci"` e
+  `family: "Dosi saltate"` devono restare visibili nel diario/report perché aiutano il
+  medico a leggere trigger e contesto. Non devono però forzare il tipo di crisi: il motore
   calcola la confidenza solo dai descrittori con hint clinici (`signalCount` in
-  `seizure_classifier.dart`).
+  `seizure_classifier.dart`) e non propone una categoria se mancano segnali durante
+  l'evento (`Corpo` o `Coscienza`).
 
 - **`engine/` e `model/ilae.dart` sono Dart puro**: nessuna dipendenza da Flutter,
   testabili in isolamento. Tenerli così — la UI ci sta sopra, non dentro.

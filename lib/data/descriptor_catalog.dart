@@ -9,8 +9,8 @@ import '../model/ilae.dart';
 /// lingua *suggerisce* una tonico-clonica, non la certifica.
 const List<Descriptor> descriptorCatalog = [
   // ------------------------------------------------ STATO D'ANIMO (contesto/trigger)
-  // Nessuna spinta clinica: sono dati di contesto (trigger), non descrivono la
-  // crisi. Servono al report per far emergere pattern (stress, sonno, umore).
+  // Dato importante per il neurologo: può aiutare a leggere pattern e trigger.
+  // Non porta hint ILAE perché non definisce da solo il tipo clinico della crisi.
   Descriptor(
     key: 'mood_calm',
     labelNatural: 'Ero tranquillo',
@@ -46,6 +46,71 @@ const List<Descriptor> descriptorCatalog = [
     labelNatural: 'Ero arrabbiato',
     phase: SeizurePhase.aura,
     family: "Stato d'animo",
+  ),
+
+  // --------------------------------------------------------------- FARMACI
+  // Aderenza farmacologica: informazione clinicamente utile, ma non classifica
+  // il tipo di crisi. Evitiamo formulazioni colpevolizzanti o causali.
+  Descriptor(
+    key: 'meds_taken_regularly',
+    labelNatural: 'No, presi come previsto',
+    phase: SeizurePhase.aura,
+    family: 'Farmaci',
+  ),
+  Descriptor(
+    key: 'meds_missed_unknown',
+    labelNatural: 'Non so / non ricordo',
+    phase: SeizurePhase.aura,
+    family: 'Farmaci',
+  ),
+  Descriptor(
+    key: 'meds_missed_today',
+    labelNatural: 'Sì, oggi / ultima dose prevista',
+    phase: SeizurePhase.aura,
+    family: 'Farmaci',
+  ),
+  Descriptor(
+    key: 'meds_missed_yesterday',
+    labelNatural: 'Sì, ieri',
+    phase: SeizurePhase.aura,
+    family: 'Farmaci',
+  ),
+  Descriptor(
+    key: 'meds_missed_2_3_days',
+    labelNatural: 'Sì, 2-3 giorni fa',
+    phase: SeizurePhase.aura,
+    family: 'Farmaci',
+  ),
+  Descriptor(
+    key: 'meds_missed_multiple_days',
+    labelNatural: 'Sì, più giorni di seguito',
+    phase: SeizurePhase.aura,
+    family: 'Farmaci',
+  ),
+
+  Descriptor(
+    key: 'missed_doses_one',
+    labelNatural: 'Una dose',
+    phase: SeizurePhase.aura,
+    family: 'Dosi saltate',
+  ),
+  Descriptor(
+    key: 'missed_doses_two',
+    labelNatural: 'Due dosi',
+    phase: SeizurePhase.aura,
+    family: 'Dosi saltate',
+  ),
+  Descriptor(
+    key: 'missed_doses_more',
+    labelNatural: 'Più di due dosi',
+    phase: SeizurePhase.aura,
+    family: 'Dosi saltate',
+  ),
+  Descriptor(
+    key: 'missed_doses_unknown',
+    labelNatural: 'Non so',
+    phase: SeizurePhase.aura,
+    family: 'Dosi saltate',
   ),
 
   // ---------------------------------------------------------------- AURA
