@@ -213,13 +213,24 @@ class _Summary extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Row(
+      child: Column(
         children: [
-          _StatCard(label: 'Eventi', value: '${events.length}'),
-          const SizedBox(width: 12),
-          _StatCard(label: 'Questo mese', value: '$thisMonth'),
-          const SizedBox(width: 12),
-          _StatCard(label: 'Da completare', value: '$drafts'),
+          Image.asset(
+            'assets/illustrations/report.png',
+            height: 72,
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.medium,
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              _StatCard(label: 'Eventi', value: '${events.length}'),
+              const SizedBox(width: 12),
+              _StatCard(label: 'Questo mese', value: '$thisMonth'),
+              const SizedBox(width: 12),
+              _StatCard(label: 'Da completare', value: '$drafts'),
+            ],
+          ),
         ],
       ),
     );

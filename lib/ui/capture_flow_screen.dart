@@ -179,6 +179,8 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          _StepIllustration(family: step.family),
+          const SizedBox(height: 12),
           Text(step.question, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 6),
           Text(_helperTextFor(step.family),
@@ -487,6 +489,43 @@ String _helperTextFor(String family) {
   }
   return 'Tocca tutto ciò che riconosci. Puoi anche saltare.';
 }
+
+class _StepIllustration extends StatelessWidget {
+  const _StepIllustration({required this.family});
+
+  final String family;
+
+  @override
+  Widget build(BuildContext context) {
+    final asset = _illustrationForFamily(family);
+    if (asset == null) return const SizedBox.shrink();
+
+    return SizedBox(
+      height: 104,
+      child: Center(
+        child: Image.asset(
+          asset,
+          height: 104,
+          fit: BoxFit.contain,
+          filterQuality: FilterQuality.medium,
+        ),
+      ),
+    );
+  }
+}
+
+String? _illustrationForFamily(String family) => switch (family) {
+      "Stato d'animo" => 'assets/illustrations/mood.png',
+      'Farmaci' => 'assets/illustrations/medication.png',
+      'Dosi saltate' => 'assets/illustrations/missed_dose.png',
+      'Sensi / preavviso' => 'assets/illustrations/aura.png',
+      'Durata aura' => 'assets/illustrations/duration.png',
+      'Confusione' => 'assets/illustrations/unknown.png',
+      'Corpo' => 'assets/illustrations/body.png',
+      'Coscienza' => 'assets/illustrations/awareness.png',
+      'Dopo' => 'assets/illustrations/after.png',
+      _ => null,
+    };
 
 /// Chip grande, ad alto contatto, adatto a dita imprecise.
 class _BigChoiceChip extends StatelessWidget {

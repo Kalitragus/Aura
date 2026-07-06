@@ -32,6 +32,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icon/logo.png
+    - assets/illustrations/
 
 # Icona app (Android) + favicon/icone web generate dal logo.
 # Rigenera con: dart run flutter_launcher_icons
