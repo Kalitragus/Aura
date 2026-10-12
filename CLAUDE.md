@@ -100,6 +100,9 @@ Punti chiave da capire prima di modificare:
   "proposta automatica, da confermare col medico".
 - **Identità git anonimizzata**: i commit usano `Kalitragus <Kalitragus@users.noreply.github.com>`
   (config locale del repo). Non reintrodurre nome/email reali in commit o file. Remote:
-  repo GitHub **privato** `Kalitragus/aura`.
+  repo GitHub **pubblico** `Kalitragus/Aura` — il progetto è aperto ai contributi perché
+  l'obiettivo è che ne nasca uno strumento migliore per chi convive con l'epilessia.
+  Essendo pubblico: nessun dato clinico reale, nessun export, nessuna credenziale nel
+  repo (vedi `.gitignore`), e nessun segreto nei messaggi di commit.
 - **Accessibilità**: l'utente può usare l'app in stato post-critico → target touch ampi,
   testo scalato (`TextScaler` in `main.dart`), una domanda per schermata, opzioni "salta".

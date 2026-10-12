@@ -1,8 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- allowBackup=false: i dati sono sanitari e la chiave AES vive nell'Android
+         Keystore, che NON è trasferibile fra dispositivi. Col backup cloud attivo il
+         ciphertext verrebbe ripristinato senza la sua chiave, cioè illeggibile, dando
+         all'utente un falso senso di backup. L'unico percorso di backup supportato è
+         l'export esplicito dal report. -->
     <application
         android:label="aura"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules">
         <activity
             android:name=".MainActivity"
             android:exported="true"

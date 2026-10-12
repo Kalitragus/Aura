@@ -43,3 +43,34 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Signing & secrets — MAI committare: contengono le password del keystore
+android/key.properties
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+.env
+.env.*
+secrets/
+credentials/
+
+# Dati clinici reali — questa app tratta dati sanitari: nessun export
+# generato dall'app o dai test deve finire nel repo.
+export/
+exports/
+backup/
+backups/
+*.csv
+*.pdf
+!assets/**/*.pdf
+
+# File locali degli assistenti AI (CLAUDE.md è invece documentato e versionato
+# di proposito: vedi la sezione "Per chi contribuisce" nel README)
+.claude/
+.cursor/
+.cursorrules
+.aider*
+.mcp.json

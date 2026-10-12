@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12+ (API 31). Esclude tutto da backup cloud e da trasferimento
+  device-to-device: i dati sono sanitari e la chiave AES resta nell'Android
+  Keystore, non trasferibile. Ripristinare il ciphertext senza la chiave
+  produrrebbe dati illeggibili. Backup = export esplicito dal report.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </device-transfer>
+</data-extraction-rules>
