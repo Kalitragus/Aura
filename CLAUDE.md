@@ -104,5 +104,8 @@ Punti chiave da capire prima di modificare:
   l'obiettivo è che ne nasca uno strumento migliore per chi convive con l'epilessia.
   Essendo pubblico: nessun dato clinico reale, nessun export, nessuna credenziale nel
   repo (vedi `.gitignore`), e nessun segreto nei messaggi di commit.
+- **Licenza AGPL-3.0**: il codice è libero ma copyleft forte — chi lo distribuisce o lo
+  offre come servizio di rete deve pubblicare il sorgente completo sotto la stessa
+  licenza. I vincoli per chi contribuisce stanno in `CONTRIBUTING.md`.
 - **Accessibilità**: l'utente può usare l'app in stato post-critico → target touch ampi,
   testo scalato (`TextScaler` in `main.dart`), una domanda per schermata, opzioni "salta".

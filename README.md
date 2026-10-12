@@ -166,6 +166,29 @@ Prossimi passi:
 - [ ] Modalità testimone (per chi assiste alla crisi)
 - [ ] Contesto automatico (sonno, ciclo, trigger) per l'analisi dei pattern
 
+## Licenza
+
+Rilasciato sotto **GNU Affero General Public License v3.0** — vedi [LICENSE](LICENSE).
+
+Puoi usarlo, studiarlo, modificarlo e ridistribuirlo. La AGPL aggiunge una condizione
+precisa: **chi distribuisce il programma o lo offre come servizio di rete deve rendere
+disponibile il codice sorgente completo**, comprese le proprie modifiche, sotto la stessa
+licenza. La scelta è deliberata — se qualcuno migliora Aura, quel miglioramento deve poter
+tornare alle persone con epilessia, non diventare un'app chiusa a pagamento.
+
+Distribuito **SENZA ALCUNA GARANZIA**, senza nemmeno la garanzia implicita di
+commerciabilità o idoneità a un fine particolare.
+
+## Per chi contribuisce
+
+Lo scopo del progetto è che ne nasca uno strumento migliore per chi convive con
+l'epilessia. Fork e pull request sono benvenuti — vedi [CONTRIBUTING.md](CONTRIBUTING.md)
+per i vincoli non negoziabili (nessuna rete, nessuna telemetria, nessun dato in chiaro,
+mai una diagnosi) e [CLAUDE.md](CLAUDE.md) per l'architettura in dettaglio.
+
+Una regola sopra le altre: **non aprire issue o pull request contenenti dati clinici
+reali**, tuoi o di altri. Per segnalare un bug usa dati inventati.
+
 ## Disclaimer
 
 Aura **non è un dispositivo medico** e **non fornisce diagnosi**. Le categorie cliniche
